@@ -17,6 +17,11 @@ public class TransportadorasView extends javax.swing.JDialog {
         setLocationRelativeTo( null );
         
         tabela.setModel(TransportadoraController.getInstancia().getTableModel());
+        TransportadoraController.recarregarModelo();
+    }
+    
+    private int getIDLinhaSelecionada(){
+        return(Integer)tabela.getValueAt(tabela.getSelectedRow(), 0);
     }
 
     @SuppressWarnings("unchecked")
@@ -27,6 +32,7 @@ public class TransportadorasView extends javax.swing.JDialog {
         btnEditar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabela = new javax.swing.JTable();
+        btnApagar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Transportadoras");
@@ -39,7 +45,6 @@ public class TransportadorasView extends javax.swing.JDialog {
         });
 
         btnEditar.setText("Editar");
-        btnEditar.setEnabled(false);
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditarActionPerformed(evt);
@@ -59,6 +64,13 @@ public class TransportadorasView extends javax.swing.JDialog {
         ));
         jScrollPane1.setViewportView(tabela);
 
+        btnApagar.setText("Apagar");
+        btnApagar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnApagarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -69,7 +81,9 @@ public class TransportadorasView extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnNovo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEditar))
+                        .addComponent(btnEditar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnApagar))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -81,7 +95,8 @@ public class TransportadorasView extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnNovo)
-                    .addComponent(btnEditar))
+                    .addComponent(btnEditar)
+                    .addComponent(btnApagar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -91,15 +106,24 @@ public class TransportadorasView extends javax.swing.JDialog {
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
         RegistrarTransportadoraView view = new RegistrarTransportadoraView((Frame)getParent(), true);
         view.setVisible(true);
-        TransportadoraController.getInstancia().addTransportadora(view.getTransportadora());
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        RegistrarTransportadoraView view = new RegistrarTransportadoraView((Frame)getParent(), true, new Transportadora());
+        Transportadora t = TransportadoraController.getTransportadoraByID( getIDLinhaSelecionada() );
+        if ( null == t ) {
+            return;
+        }
+        
+        RegistrarTransportadoraView view = new RegistrarTransportadoraView((Frame)getParent(), true, t);
         view.setVisible(true);
     }//GEN-LAST:event_btnEditarActionPerformed
 
+    private void btnApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApagarActionPerformed
+        TransportadoraController.apagar(getIDLinhaSelecionada());
+    }//GEN-LAST:event_btnApagarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnApagar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnNovo;
     private javax.swing.JScrollPane jScrollPane1;

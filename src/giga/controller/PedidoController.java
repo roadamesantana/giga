@@ -1,9 +1,6 @@
 package giga.controller;
 
 import giga.model.Pedido;
-import giga.model.Produto;
-import java.util.Vector;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 
 /**

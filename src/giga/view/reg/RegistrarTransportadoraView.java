@@ -1,19 +1,22 @@
 package giga.view.reg;
 
+import giga.controller.TransportadoraController;
 import giga.model.Transportadora;
 
 /**
  * @author Ronald
  */
 public class RegistrarTransportadoraView extends javax.swing.JDialog {
+    private Transportadora transportadora;
 
     public RegistrarTransportadoraView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         
         setLocationRelativeTo( null );
-        
         setTitle("Nova Transportadora");
+        
+        transportadora = null;
     }
     
     public RegistrarTransportadoraView(java.awt.Frame parent, boolean modal, Transportadora transportadora) {
@@ -22,19 +25,12 @@ public class RegistrarTransportadoraView extends javax.swing.JDialog {
         
         setLocationRelativeTo( null );
         
-        setTitle(transportadora.getNome());
-    }
-    
-    public Transportadora getTransportadora(){
-        final String nome = txtNome.getText();
-        if ( nome.isEmpty() ) {
-            return null;
-        }
+        final String nome = transportadora.getNome();
         
-        Transportadora t = new Transportadora();
-        t.setNome(nome);
+        setTitle(nome);
+        txtNome.setText(nome);
         
-        return t;
+        this.transportadora = transportadora;
     }
 
     @SuppressWarnings("unchecked")
@@ -46,6 +42,11 @@ public class RegistrarTransportadoraView extends javax.swing.JDialog {
         btnSalvar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jLabel1.setText("Nome");
 
@@ -87,8 +88,22 @@ public class RegistrarTransportadoraView extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        Transportadora transp = new Transportadora();
+        transp.setNome(txtNome.getText());
+        
+        if ( null == transportadora ){
+            TransportadoraController.getInstancia().addTransportadora(transp);
+        } else {
+            transportadora.setNome(txtNome.getText());
+            TransportadoraController.getInstancia().editarTransportadora(transportadora);
+        }
+        
         dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        TransportadoraController.getInstancia().setTransportadoraEditada(null);
+    }//GEN-LAST:event_formWindowClosed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
