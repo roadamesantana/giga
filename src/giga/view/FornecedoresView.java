@@ -18,6 +18,11 @@ public class FornecedoresView extends javax.swing.JDialog {
         setLocationRelativeTo( null );
         
         tabela.setModel(FornecedorController.getInstancia().getTableModel());
+        FornecedorController.recarregarModelo();
+    }
+    
+    private int getIDLinhaSelecionada(){
+        return(Integer)tabela.getValueAt(tabela.getSelectedRow(), 0);
     }
 
     @SuppressWarnings("unchecked")
@@ -28,6 +33,7 @@ public class FornecedoresView extends javax.swing.JDialog {
         tabela = new javax.swing.JTable();
         btnNovo = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
+        btnApagar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Fornecedores");
@@ -52,10 +58,16 @@ public class FornecedoresView extends javax.swing.JDialog {
         });
 
         btnEditar.setText("Editar");
-        btnEditar.setEnabled(false);
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditarActionPerformed(evt);
+            }
+        });
+
+        btnApagar.setText("Apagar");
+        btnApagar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnApagarActionPerformed(evt);
             }
         });
 
@@ -71,6 +83,8 @@ public class FornecedoresView extends javax.swing.JDialog {
                         .addComponent(btnNovo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEditar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnApagar)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -82,7 +96,8 @@ public class FornecedoresView extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnNovo)
-                    .addComponent(btnEditar))
+                    .addComponent(btnEditar)
+                    .addComponent(btnApagar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -92,15 +107,24 @@ public class FornecedoresView extends javax.swing.JDialog {
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
         RegistrarFornecedorView view = new RegistrarFornecedorView((Frame)getParent(), true);
         view.setVisible(true);
-        FornecedorController.getInstancia().addFornecedor(view.getFornecedor());
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        RegistrarFornecedorView view = new RegistrarFornecedorView((Frame)getParent(), true, new Fornecedor());
+        Fornecedor f = FornecedorController.getByID( getIDLinhaSelecionada() );
+        if ( null == f ) {
+            return;
+        }
+        
+        RegistrarFornecedorView view = new RegistrarFornecedorView((Frame)getParent(), true, f);
         view.setVisible(true);
     }//GEN-LAST:event_btnEditarActionPerformed
 
+    private void btnApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApagarActionPerformed
+        FornecedorController.apagar(getIDLinhaSelecionada());
+    }//GEN-LAST:event_btnApagarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnApagar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnNovo;
     private javax.swing.JScrollPane jScrollPane1;

@@ -20,7 +20,7 @@ public class TelefoneController {
         return modelTelefones;
     }
     
-    public static Telefone getTelefone(){
+    public Telefone getTelefone(){
         RegistrarTelefoneView view = new RegistrarTelefoneView(new Frame(), true);
         view.setVisible(true);
         Telefone tel = view.getTelefone();

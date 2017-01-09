@@ -1,6 +1,8 @@
 package giga.controller;
 
 import giga.model.Fornecedor;
+import giga.model.dao.FornecedorDAO;
+import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -9,10 +11,14 @@ import javax.swing.table.DefaultTableModel;
 public class FornecedorController {
     private static FornecedorController instancia;
     
-    private DefaultTableModel model;
+    private static DefaultTableModel model;
+    
+    private static FornecedorDAO fornecedorDAO;
     
     private FornecedorController(){
-        model = new DefaultTableModel(new Object[]{"Nome", "Descrição", "Endereço", "Número", "Bairro", "Cidade"},0);
+        model = new DefaultTableModel(new Object[]{"ID", "Nome", "Descrição", "Endereço", "Número", "Bairro", "Cidade"},0);
+        
+        fornecedorDAO = new FornecedorDAO();
     }
     
     public static FornecedorController getInstancia(){
@@ -21,6 +27,27 @@ public class FornecedorController {
         }
         
         return instancia;
+    }
+    
+    public static void recarregarModelo(){
+        model.setRowCount(0);
+        
+        ArrayList<Object> fornecedor = fornecedorDAO.listar();
+        
+        for (Object obj : fornecedor) {
+            Fornecedor f = (Fornecedor)obj;
+            model.addRow(new Object[]{ 
+                f.getID(), 
+                f.getNome(), 
+                f.getDescricao(),
+                f.getEndereco(),
+                f.getNumero(),
+                f.getBairro(),
+                f.getCidade() 
+            });
+        }
+        
+        model.fireTableDataChanged();
     }
     
     public DefaultTableModel getTableModel(){
@@ -32,13 +59,27 @@ public class FornecedorController {
             return;
         }
         
-        model.addRow(new Object[]{
-                                    fornecedor.getNome(), 
-                                    fornecedor.getDescricao(),
-                                    fornecedor.getEndereco(),
-                                    fornecedor.getNumero(),
-                                    fornecedor.getBairro(),
-                                    fornecedor.getCidade()
-        });
+        fornecedorDAO.salvar(fornecedor);
+        
+        recarregarModelo();
+    }
+    
+    public void editarFornecedor(Fornecedor fornecedor){
+        if ( null == fornecedor ) {
+            return;
+        }
+        
+        fornecedorDAO.editar(fornecedor);
+        
+        recarregarModelo();
+    }
+    
+    public static void apagar(int id){
+        fornecedorDAO.apagar(id);
+        recarregarModelo();
+    }
+    
+    public static Fornecedor getByID(int id){
+        return (Fornecedor)fornecedorDAO.getByID(id);
     }
 }

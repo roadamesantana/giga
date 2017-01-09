@@ -10,9 +10,9 @@ import javax.swing.DefaultListModel;
  * @author Ronald
  */
 public class EmailController {
-    private static DefaultListModel modelEmails;
+    private DefaultListModel modelEmails;
     
-    public static DefaultListModel getEmailsListModel() {
+    public DefaultListModel getEmailsListModel() {
         if ( null == modelEmails ){
             modelEmails = new DefaultListModel();
         }
@@ -20,7 +20,7 @@ public class EmailController {
         return modelEmails;
     }
     
-    public static Email getEmail(){
+    public Email getEmail(){
         RegistrarEmailView view = new RegistrarEmailView(new Frame(), true);
         view.setVisible(true);
         Email mail = view.getEmail();

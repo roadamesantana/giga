@@ -9,15 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Ronald
  */
 public class TransportadoraDAO implements CrudInterface{
-    private Transportadora criarTransportadora( ResultSet rs ){
+    @Override
+    public Object criar(ResultSet rs) {
         Transportadora transp = new Transportadora();
 
         try {
@@ -49,11 +48,7 @@ public class TransportadoraDAO implements CrudInterface{
         } catch ( ClassCastException ex ) {
             System.err.println( "Erro no cast >> \n" + ex );
         } finally {
-            try {
-                ConexaoDAO.GET_CONNCETION().close();
-            } catch (SQLException ex) {
-                Logger.getLogger(TransportadoraDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            try { ConexaoDAO.GET_CONNCETION().close(); } catch (SQLException ex) {}
         }
     }
 
@@ -76,11 +71,7 @@ public class TransportadoraDAO implements CrudInterface{
         } catch ( ClassCastException ex ) {
             System.err.println( "Erro no cast >> \n" + ex );
         } finally {
-            try {
-                ConexaoDAO.GET_CONNCETION().close();
-            } catch (SQLException ex) {
-                Logger.getLogger(TransportadoraDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            try { ConexaoDAO.GET_CONNCETION().close(); } catch (SQLException ex) {}
         }
     }
 
@@ -98,17 +89,13 @@ public class TransportadoraDAO implements CrudInterface{
         } catch ( SQLException e ) {
             System.err.println( "Não foi possível apagar transportadora no banco >> \n" + e );
         } finally {
-            try {
-                ConexaoDAO.GET_CONNCETION().close();
-            } catch (SQLException ex) {
-                Logger.getLogger(TransportadoraDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            try { ConexaoDAO.GET_CONNCETION().close(); } catch (SQLException ex) {}
         }
     }
 
     @Override
     public ArrayList<Object> listar() {
-        ArrayList<Object> transps = new ArrayList();
+        ArrayList<Object> objs = new ArrayList();
         
         try {
             Connection connection = ConexaoDAO.GET_CONNCETION();
@@ -119,26 +106,22 @@ public class TransportadoraDAO implements CrudInterface{
             ResultSet resultSet = statement.executeQuery( sql );
 
             while ( resultSet.next() ) {
-                Transportadora transp = criarTransportadora( resultSet );
+                Transportadora transp = (Transportadora)criar( resultSet );
 
                 if ( null == transp ) {
                     continue;
                 }
                 
-                transps.add(transp);
+                objs.add(transp);
             }
         } catch ( SQLException e ) {
             System.err.println( "Não foi possível obter as transportadoras a partir do banco >> \n" + e );
             return null;
         } finally {
-            try {
-                ConexaoDAO.GET_CONNCETION().close();
-            } catch (SQLException ex) {
-                Logger.getLogger(TransportadoraDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            try { ConexaoDAO.GET_CONNCETION().close(); } catch (SQLException ex) {}
         }
 
-        return transps;
+        return objs;
     }
 
     @Override
@@ -155,7 +138,7 @@ public class TransportadoraDAO implements CrudInterface{
                 return null;
             }
             
-            Transportadora transp = criarTransportadora( resultSet );
+            Transportadora transp = (Transportadora)criar( resultSet );
 
             if ( null == transp ) {
                 return null;
@@ -165,14 +148,10 @@ public class TransportadoraDAO implements CrudInterface{
         } catch ( SQLException e ) {
             System.err.println( "Não foi possível obter a transportadora a partir do banco >> \n" + e );
         } finally {
-            try {
-                ConexaoDAO.GET_CONNCETION().close();
-            } catch (SQLException ex) {
-                Logger.getLogger(TransportadoraDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            try { ConexaoDAO.GET_CONNCETION().close(); } catch (SQLException ex) {}
         }
         
         return null;
     }
-    
+
 }

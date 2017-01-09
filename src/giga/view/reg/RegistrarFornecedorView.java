@@ -1,6 +1,7 @@
 package giga.view.reg;
 
 import giga.controller.EmailController;
+import giga.controller.FornecedorController;
 import giga.controller.TelefoneController;
 import giga.model.Email;
 import giga.model.Fornecedor;
@@ -13,8 +14,13 @@ import javax.swing.DefaultListModel;
  * @author Ronald
  */
 public class RegistrarFornecedorView extends javax.swing.JDialog {
+    private Fornecedor fornecedor;
     private ArrayList<Telefone> telefones;
     private ArrayList<Email> emails;
+    
+    private TelefoneController tController;
+    private EmailController eController;
+    
 
     public RegistrarFornecedorView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -34,32 +40,36 @@ public class RegistrarFornecedorView extends javax.swing.JDialog {
         setLocationRelativeTo( null );
         
         setTitle(fornecedor.getNome());
-    }
-    
-    public Fornecedor getFornecedor(){
-        Fornecedor forn = new Fornecedor();
-        forn.setNome(txtNome.getText());
-        forn.setDescricao(txtDescricao.getText());
-        forn.setCidade(txtCidade.getText());
-        forn.setEndereco(txtEndereco.getText());
-        forn.setBairro(txtBairro.getText());
-        if(!txtNumero.getText().isEmpty()){
-            forn.setNumero(Integer.parseInt(txtNumero.getText()));
-        }
-        forn.setTelefones(telefones);
-        forn.setEmails(emails);
         
-        return forn;
+        txtNome.setText(fornecedor.getNome());
+        txtDescricao.setText(fornecedor.getDescricao());
+        txtCidade.setText(fornecedor.getCidade());
+        txtEndereco.setText(fornecedor.getEndereco());
+        txtBairro.setText(fornecedor.getBairro());
+        txtNumero.setText(String.valueOf(fornecedor.getNumero()));
+        telefones = fornecedor.getTelefones();
+        emails = fornecedor.getEmails();
+        
+        for (Telefone tel : telefones) {
+            ((DefaultListModel)lstTelefones.getModel()).addElement(tel);            
+        }
+        
+        for (Email email : emails) {
+            ((DefaultListModel)lstEmails.getModel()).addElement(email);
+        }
+        
+        this.fornecedor = fornecedor;
     }
     
     private void start(){
         telefones = new ArrayList<>();
         emails = new ArrayList<>();
         
-        TelefoneController tc = new TelefoneController();
+        tController = new TelefoneController();
+        eController = new EmailController();
         
-        lstTelefones.setModel(tc.getTelefonesListModel());
-        lstEmails.setModel(EmailController.getEmailsListModel());
+        lstTelefones.setModel(tController.getTelefonesListModel());
+        lstEmails.setModel(eController.getEmailsListModel());
     }
 
     @SuppressWarnings("unchecked")
@@ -89,6 +99,11 @@ public class RegistrarFornecedorView extends javax.swing.JDialog {
         btnSalvar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jLabel1.setText("Nome");
 
@@ -238,7 +253,7 @@ public class RegistrarFornecedorView extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddTelefoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddTelefoneActionPerformed
-        Telefone tel = TelefoneController.getTelefone();
+        Telefone tel = tController.getTelefone();
         if ( null == tel ){
             return;
         }
@@ -249,19 +264,46 @@ public class RegistrarFornecedorView extends javax.swing.JDialog {
     }//GEN-LAST:event_btnAddTelefoneActionPerformed
 
     private void btnAddEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddEmailActionPerformed
-        Email email = EmailController.getEmail();
+        Email email = eController.getEmail();
         if ( null == email ){
             return;
         }
         
         emails.add(email);
         
-        EmailController.getEmailsListModel().addElement(email.toString());
+        ((DefaultListModel)lstEmails.getModel()).addElement(email.toString());
     }//GEN-LAST:event_btnAddEmailActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        if ( null == fornecedor ){
+            Fornecedor forn = new Fornecedor();
+            forn.setNome(txtNome.getText());
+            forn.setDescricao(txtDescricao.getText());
+            forn.setCidade(txtCidade.getText());
+            forn.setEndereco(txtEndereco.getText());
+            forn.setBairro(txtBairro.getText());
+            forn.setNumero(Integer.parseInt(txtNumero.getText()));
+            forn.setEmails(emails);
+            forn.setTelefones(telefones);
+            
+            FornecedorController.getInstancia().addFornecedor(forn);
+        } else {
+            fornecedor.setNome(txtNome.getText());
+            fornecedor.setDescricao(txtDescricao.getText());
+            fornecedor.setCidade(txtCidade.getText());
+            fornecedor.setEndereco(txtEndereco.getText());
+            fornecedor.setBairro(txtBairro.getText());
+            fornecedor.setNumero(Integer.parseInt(txtNumero.getText()));
+            fornecedor.setEmails(emails);
+            fornecedor.setTelefones(telefones);
+            FornecedorController.getInstancia().editarFornecedor(fornecedor);
+        }
         dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowClosed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddEmail;
